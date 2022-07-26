@@ -6,25 +6,22 @@ interface Params {
 }
 
 export async function getBids(params: Params) {
-
+	
 	const url = `
 	https://www.bombinhas.sc.gov.br/licitacoes/index/rotear/categoria/pregao/situacao/${params.progress}/actionDestino/listar/codMapaItem/11152/pagina/${params.id}
 	`
-		
+	
 	const browser = await launch()
 	const page = await browser.newPage()
 	await page.goto(url)
-			
+	
 	const bids = await page.evaluate((params: Params) => {
 		const nodeList = document.querySelectorAll('.item-lista li')
-					
+		
 		const existingNextPage = document.querySelector('.paginaAtiva a')
-
-		const pageList = document.querySelectorAll('.listaPagina li')
-										
+				
 		const liArray = [...nodeList]
 		const pageNumber = [existingNextPage]
-		const array = [...pageList]
 		
 		if(pageNumber[0] !== null){
 			if(pageNumber[0].innerHTML !== params.id){
@@ -43,15 +40,15 @@ export async function getBids(params: Params) {
 				list.pop()
 			}
 		} else {
-			while(list.length > array.length -1) {
+			while(list.length > 10) {
 				list.pop()
 			}
 		}
-					
+		
 		const bids = list.map((h) => ({
 			html: h.innerHTML
 		}))
-										
+		
 		return bids
 	}, params)
 	await browser.close()
