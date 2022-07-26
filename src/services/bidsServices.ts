@@ -11,7 +11,12 @@ export async function getBids(params: Params) {
 	https://www.bombinhas.sc.gov.br/licitacoes/index/rotear/categoria/pregao/situacao/${params.progress}/actionDestino/listar/codMapaItem/11152/pagina/${params.id}
 	`
 	
-	const browser = await launch()
+	const browser = await launch({
+		args: [
+			'--no-sandbox',
+			'--disable-setuid-sandbox',
+		],
+	})
 	const page = await browser.newPage()
 	await page.goto(url)
 	
