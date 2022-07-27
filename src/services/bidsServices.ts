@@ -1,4 +1,5 @@
 import { launch } from 'puppeteer'
+import { notFoundError } from '../utils/errorUtils.js'
 
 interface Params {
 	id: string;
@@ -31,10 +32,10 @@ export async function getBids(params: Params) {
 		
 		if(pageNumber[0] !== null){
 			if(pageNumber[0].innerHTML !== params.id){
-				throw new Error('not_found')
+				return 'not_found'
 			} 
 		} else if (params.id !== '1') {
-			throw new Error('not_found')
+			return 'not_found'
 		}
 
 		// eslint-disable-next-line prefer-const
@@ -58,6 +59,7 @@ export async function getBids(params: Params) {
 		return bids
 	}, params)
 	await browser.close()
+	if(bids === 'not_found') throw notFoundError('not_found')
 
 	return JSON.stringify(bids, null, 2)
 }
